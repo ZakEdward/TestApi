@@ -4,7 +4,6 @@ from rest_framework import status
 from .models import User
 from .serializers import PhoneNumberSerializer, VerificationCodeSerializer, UserProfileSerializer
 import random
-import string
 import time
 import logging
 
