@@ -1,0 +1,41 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  POSTGRES_DB: referral_system
+  POSTGRES_USER: users
+  POSTGRES_PASSWORD: Zak1991
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
+  DJANGO_SETTINGS_MODULE: referral_system.settings
+
+services:
+  - postgres:latest
+
+before_script:
+  - apt-get update -qq && apt-get install -qq -y python3-dev python3-pip
+  - pip3 install -r requirements.txt
+
+test:
+  stage: test
+  script:
+    - python3 manage.py test
+
+build:
+  stage: build
+  script:
+    - python3 manage.py collectstatic --noinput
+    - python3 manage.py migrate
+  artifacts:
+    paths:
+      - static/
+
+deploy:
+  stage: deploy
+  script:
+    - python3 manage.py migrate
+    - python3 manage.py runserver 0.0.0.0:8000
+  only:
+    - master
